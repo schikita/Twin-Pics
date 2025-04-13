@@ -1,0 +1,52 @@
+# Python bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environment
+.venv/
+env/
+venv/
+ENV/
+
+# IDE/editor configs
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Logs and debug
+*.log
+
+# Pygame cache (если используешь convert или save)
+*.bmp
+*.tga
+
+# App state
+*.db
+*.sqlite3
+*.sublime-workspace
+
+# pyinstaller / py2exe
+dist/
+build/
+*.spec
+
+# Misc
+*.swp
+*.bak
+
+# User data
+assets/temp/
+*.sav
+*.tmp
+
+# Tests/coverage
+htmlcov/
+.coverage
+.pytest_cache/
+
+# Ignore compiled stub files if used
+*.pyi
