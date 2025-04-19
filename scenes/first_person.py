@@ -1,7 +1,11 @@
 import pygame
+import cv2
+import os
+import numpy as np
 from objects.player import Player
 from core.config import TEXT_COLOR
-
+image_path = os.path.join('assets//images//motel-room.png')
+#Hello
 class FirstPersonScene:
     def __init__(self, screen):
         self.screen = screen
@@ -10,7 +14,11 @@ class FirstPersonScene:
         self.log = ["Ты очнулся в номере мотеля в Твин Пиксе..."]
         self.player = Player()
         # картинка мотеля + музыка на старом радио
-
+        image = cv2.imread(image_path)
+        image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
+        surf = pygame.surfarray.make_surface(image)
+        rotated = pygame.transform.rotate(surf, -90)
+        self.background = pygame.transform.scale(rotated, self.screen.get_size())
 
     def handle_event(self, event):
         if event.type == pygame.KEYDOWN:
@@ -31,6 +39,8 @@ class FirstPersonScene:
 
     def draw(self):
         y = 20
+        self.screen.blit(self.background, (0 , 0))
+        pygame.draw.rect(self.screen,(0,0,0),(0,450,800,600))
         for line in self.log[-15:]:
             rendered = self.font.render(line, True, TEXT_COLOR)
             self.screen.blit(rendered, (20, y))
