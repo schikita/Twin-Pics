@@ -14,14 +14,16 @@ class FirstPersonScene:
         self.screen = screen
         self.font = pygame.font.SysFont("Courier", 22)
         self.input = ""
-        self.log = ["Ты очнулся в номере мотеля в Твин Пиксе...\n"
-        "1. Осмотреться\n"
-        "2. Выглянуть в окно\n"
-        "3. Выйти на улицу\n"
+        self.log = ['Ты очнулся в номере мотеля в Твин Пиксе...',
+        "1. Осмотреться ",
+        "2. Выглянуть в окно ",
+        "3. Выйти на улицу ", 
         "4. ..."]
         self.player = Player()
         self.background = self._load_background(image_path)
         self._setup_music()
+
+
 
 
     def _setup_music(self):
@@ -60,12 +62,12 @@ class FirstPersonScene:
         pass
 
     def draw(self):
-        y = 20
+        y = 450
         self.screen.blit(self.background, (0 , 0))
         pygame.draw.rect(self.screen,(0,0,0),(0,450,800,600))
         for line in self.log[-15:]:
             rendered = self.font.render(line, True, TEXT_COLOR)
             self.screen.blit(rendered, (20, y))
-            y += 28
+            y += 22
         input_surface = self.font.render("> " + self.input, True, TEXT_COLOR)
         self.screen.blit(input_surface, (20, 560))
