@@ -33,6 +33,11 @@ class FirstPersonScene:
         self.input_lock_timer = 0.0
         self.input_lock_duration = 1.5
 
+        self.typing_text = ""
+        self.typing_progress = 0
+        self.typing_speed = 30
+        self.typing_active = False
+
     def _setup_music(self):
         if os.path.exists(music_path):
             pygame.mixer.music.load(music_path)
@@ -58,10 +63,14 @@ class FirstPersonScene:
             if event.key == pygame.K_RETURN:
                 command = self.input.strip().lower()
                 if command:
+                    self.log.clear()  # ОЧИЩАЕМ лог полностью
                     self.log.append(f"> {command}")
                     result = self.player.act(command)
                     if result:
-                        self.log.append(result)
+                        self.typing_text = result
+                        self.typing_progress = 0
+                        self.typing_active = True
+
                 self.input = ""  
                 self.input_locked = True
             elif event.key == pygame.K_BACKSPACE:
@@ -74,31 +83,47 @@ class FirstPersonScene:
         if self.cursor_timer >= self.cursor_interval:
             self.cursor_visible = not self.cursor_visible
             self.cursor_timer = 0.0
-        
+
         if self.input_locked:
             self.input_lock_timer += dt
             if self.input_lock_timer >= self.input_lock_duration:
                 self.input_locked = False
                 self.input_lock_timer = 0.0
 
+        # <-- Блок печатания должен быть отдельно, а не внутри input_locked!
+        if self.typing_active:
+            self.typing_progress += self.typing_speed * dt
+            num_chars = int(self.typing_progress)
+            if num_chars >= len(self.typing_text):
+                self.log.append(self.typing_text)
+                self.typing_text = ""
+                self.typing_active = False
+            else:
+                if not self.log or self.log[-1] != self.typing_text[:num_chars]:
+                    if self.log and self.log[-1].startswith(self.typing_text[:num_chars - 1]):
+                        self.log[-1] = self.typing_text[:num_chars]
+                    else:
+                        self.log.append(self.typing_text[:num_chars])
+
+
     def draw(self):
         y = 450
-        self.screen.blit(self.background, (0 , 0))
+        self.screen.blit(self.background, (0, 0))
         pygame.draw.rect(self.screen, (0, 0, 0), (0, 450, 800, 600))
-        
+    
         for line in self.log[-15:]:
             rendered = self.font.render(line, True, TEXT_COLOR)
             self.screen.blit(rendered, (20, y))
             y += 22
 
+        # Инициализируем input_text правильно
         if not self.input_locked:
             input_text = "> " + self.input
             if self.cursor_visible:
                 input_text += "|"
-        else:
-            input_text = ""
-
-
-        if input_text:
+        
             input_surface = self.font.render(input_text, True, TEXT_COLOR)
             self.screen.blit(input_surface, (20, 560))
+        else:
+            # Ввод заблокирован — не рисуем ничего!
+            pass
